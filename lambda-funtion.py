@@ -1,39 +1,37 @@
-s3= boto3.client('s3')
-
-def lambda_handler(event,context):
-
-
-    head_tail = os.path.split(event['name'])
-    newfilename = head_tail[1]
-    newfilepath = head_tail[0]
-
-    awsprep_auth_token = 'xxxxxxxxxxxxxxx'
-    aws_planid = 99999999
-    plannode_handle = 'abcdef'
-    overrideKey = 'param1'
-
-    if context.event_type == 'google.storage.object.finalize' and newfilepath == 'landingzone':
-
-        print('Run Plan on new file: {}'.format(newfilename))
-
-        aws_runjob_endpoint = '/v4/plans/' + aws_planid + '/run'
-        aws_plan_pram = {
-            "wrangledDataset": {"id": aws_jobid},
-            "planNodeOverrides":   [{"handle": plannode_handle,"overrideKey": overrideKey, "value": newfilenam }]
-        }
-        print('Run aws plan with param override: {}'.format(aws_plan_pram))
-        aws_headers = {
-            "Content-Type":"application/json",
-            "Authorization": "Bearer "+awsprep_auth_token
-        }        
-
-        resp = requests.post(
-            url=aws_runjob_endpoint,
-            headers=aws_headers,
-            data=json.dumps(aws_plan_pram)
-        )
-
-        print('Status Code : {}'.format(resp.status_code))      
-        print('Result : {}'.format(resp.json()))
-
-    return 'End File event'.format(newfilename)
+    #pip install requests
+    import json
+    import urllib.parse
+    import boto3
+    import urllib3
+    import urllib.request
+    import ssl
+    
+    print('Loading function')
+    
+    s3 = boto3.client('s3')
+    
+    def lambda_handler(event, context):
+    
+        # Get the object from the event and show its content type
+        bucket = event['Records'][0]['s3']['bucket']['name']
+        key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+        try:
+            response = s3.get_object(Bucket=bucket, Key=key)
+            trifacta_auth_token = {{token}}
+            run_plan_endpoint = '{{url}}/v4/plans/71/run'
+            data = urllib.parse.urlencode({'planNodeOverrides' : [{'handle': '93','overrideKey': 'City_param','value': 'Phoenix'}]}).encode('ascii')
+            
+            print('data: {}'.format(data))
+            trifacta_headers = {
+                "Content-Type":"application/json",
+                "Authorization": "Bearer "+trifacta_auth_token
+            }   
+            context = ssl._create_unverified_context()
+            req = urllib.request.Request(run_plan_endpoint, json.dumps({'planNodeOverrides' : [{'handle': '93','overrideKey': 'City_param','value': 'Phoenix'}]}).encode("utf-8"), trifacta_headers)
+            with urllib.request.urlopen(req, context=context) as response:
+                 the_page = response.read()
+    
+        except Exception as e:
+            print(e)
+            print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
+            raise e
