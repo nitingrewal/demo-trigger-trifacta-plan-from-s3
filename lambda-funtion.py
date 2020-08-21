@@ -1,4 +1,3 @@
-    #pip install requests
     import json
     import urllib.parse
     import boto3
@@ -18,7 +17,7 @@
         try:
             response = s3.get_object(Bucket=bucket, Key=key)
             trifacta_auth_token = {{token}}
-            run_plan_endpoint = '{{url}}/v4/plans/71/run'
+            run_plan_endpoint = '{{url}}/v4/plans/{planId}/run'
             data = urllib.parse.urlencode({'planNodeOverrides' : [{'handle': '93','overrideKey': 'City_param','value': 'Phoenix'}]}).encode('ascii')
             
             print('data: {}'.format(data))
