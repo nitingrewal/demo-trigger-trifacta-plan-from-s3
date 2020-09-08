@@ -2,3 +2,9 @@
 
 ![image](Plan_parameter_with_Lambda_functions.jpg)
 All Trifacta API https://api.trifacta.com/
+
+
+
+A Sample plan to do this kind of work is shown here
+
+![image](Plan_to_move_data.png)
