@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
     try:
         response = s3.get_object(Bucket=bucket, Key=key)
-        trifacta_auth_token = "eyJ0b2tlbklkIjoiNzk4YmY1ZDktNDY1MS00ZTgzLWFiMDAtMDBkMGM1YmExOWRjIiwic2VjcmV0IjoiNjFkMmYxMGNkYWQ2ZDI3MTVhOGNlNjI3YTdkMWRhNTBiNzVjNjNiZmFmNTkzNTEyZWNkYzViZWYyOTQ2ZTI0MSJ9"
+        trifacta_auth_token = {{token}}
         run_plan_endpoint = '{{url}}/v4/plans/{{id}}/run'
         currentDay = datetime.now().day
         currentMonth = datetime.now().month
